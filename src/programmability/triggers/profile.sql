@@ -8,8 +8,8 @@ create function trigger_profile()
 as $$
 begin
     -- logic
-    insert into public.profile (id, email)
-    values (new.id, new.email);
+    insert into public.profile (id, email, username)
+    values (new.id, new.email, new.raw_user_meta_data ->> 'username');
     return new;
 end;
 $$;
@@ -17,7 +17,7 @@ $$;
 -- 1010: create trigger statement
 drop trigger if exists trigger_profile on auth.users;
 create trigger trigger_profile
-    after insert -- update?
+    after insert -- include update?
     on auth.users
     for each row
     execute procedure trigger_profile();
